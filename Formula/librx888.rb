@@ -8,12 +8,13 @@ class Librx888 < Formula
     depends_on "libusb"
   
     def install
-      system "mkdir", "build"
-      system "cd", "build"
-      system "cmake", "..", *std_cmake_args
-      system "make"
-      system "make", "install"
+        mkdir "build" do
+          system "cmake", "..", *std_cmake_args
+          system "make"
+          system "make", "install"
+        end
     end
+      
   
     test do
       system "false"
