@@ -1,0 +1,57 @@
+name: AVR32 toolchain formula
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/avr32-toolchain.yml"
+      - "Formula/avr32-toolchain.rb"
+      - "README.md"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/avr32-toolchain.yml"
+      - "Formula/avr32-toolchain.rb"
+      - "README.md"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test avr32-toolchain formula
+    runs-on: macos-26
+    timeout-minutes: 90
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6.0.3
+
+      - name: Tap local checkout
+        run: |
+          brew tap cozycactus/tap "$GITHUB_WORKSPACE"
+          if brew help trust >/dev/null 2>&1; then
+            brew trust cozycactus/tap
+          fi
+          echo "TAP_PATH=$(brew --repository cozycactus/tap)" >> "$GITHUB_ENV"
+
+      - name: Style formula
+        run: |
+          cd "$TAP_PATH"
+          brew style --formula Formula/avr32-toolchain.rb
+
+      - name: Audit formula
+        run: |
+          cd "$TAP_PATH"
+          brew audit --strict --online avr32-toolchain
+
+      - name: Install formula
+        run: |
+          brew install cozycactus/tap/avr32-toolchain
+
+      - name: Test formula
+        run: |
+          brew test avr32-toolchain
