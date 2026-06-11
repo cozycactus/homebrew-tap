@@ -1,14 +1,24 @@
 class Avr32Toolchain < Formula
   desc "AVR32 GCC, binutils, newlib, and GDB toolchain"
   homepage "https://github.com/cozycactus/avr32-toolchain-macos-arm64"
-  url "https://github.com/cozycactus/avr32-toolchain-macos-arm64/releases/download/v2026.06.03/avr32-tools-src-macos-arm64-20260603.tar.gz"
-  version "3.4.3.20260603"
-  sha256 "7b81496968cc3229d2a65bc699b1c8f9703ee117af9ff12fa7b602211458ad6e"
+  version "3.4.3.20260611"
   license :cannot_represent
 
   depends_on "bison" => :build
   depends_on "flex" => :build
   depends_on "make" => :build
+
+  on_macos do
+    on_arm do
+      url "https://github.com/cozycactus/avr32-toolchain-macos-arm64/releases/download/v2026.06.03/avr32-tools-src-macos-arm64-20260603.tar.gz"
+      sha256 "7b81496968cc3229d2a65bc699b1c8f9703ee117af9ff12fa7b602211458ad6e"
+    end
+
+    on_intel do
+      url "https://github.com/cozycactus/avr32-toolchain-macos-arm64/releases/download/v2026.06.03/avr32-tools-src-macos-x86_64-20260611.tar.gz"
+      sha256 "bd2f4f583db285c190a6d2525ef9874aa37e2b11a0d04a4aa3f722d931af601e"
+    end
+  end
 
   resource "avr32-gdb" do
     url "https://github.com/embecosm/avr32-binutils-gdb/archive/f6fe27a31239536e0c85cfe447debb845b127f6d.tar.gz"
@@ -17,7 +27,6 @@ class Avr32Toolchain < Formula
 
   def install
     odie "avr32-toolchain currently supports macOS only" unless OS.mac?
-    odie "avr32-toolchain currently supports Apple Silicon only" unless Hardware::CPU.arm?
 
     toolchain_root =
       if (buildpath/"bin/avr32-gcc").exist?
@@ -93,7 +102,7 @@ class Avr32Toolchain < Formula
 
   def caveats
     <<~EOS
-      This formula installs the macOS Apple Silicon AVR32 compiler archive and
+      This formula installs the matching macOS AVR32 compiler archive and
       builds avr32-gdb from Embecosm source.
 
       Microchip/Atmel device headers are not included. Fetch them separately
