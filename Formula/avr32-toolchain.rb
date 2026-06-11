@@ -8,6 +8,9 @@ class Avr32Toolchain < Formula
   depends_on "flex" => :build
   depends_on "make" => :build
 
+  depends_on "gmp"
+  depends_on "mpfr"
+
   on_macos do
     on_arm do
       url "https://github.com/cozycactus/avr32-toolchain-macos-arm64/releases/download/v2026.06.03/avr32-tools-src-macos-arm64-20260603.tar.gz"
